@@ -18,17 +18,21 @@
 <body>
     <script>
         let timeOffset = 0;
-        const deviceUnixTime = Date.now();
+        function refreshUNIX() {
+            fetch("https://worldtimeapi.org/api/timezone/Etc/UTC")
+            .then(response => response.json())
+            .then(data => {
+                const serverUnixTime = new Date(data.utc_datetime).getTime();
+                const deviceUnixTime = Date.now();             
+                timeOffset = serverUnixTime - deviceUnixTime; // サーバー時間とデバイス時間の差分
+            });
+        }
 
-        fetch("https://worldtimeapi.org/api/timezone/Etc/UTC")
-        .then(response => response.json())
-        .then(data => {
-            const serverUnixTime = new Date(data.utc_datetime).getTime();
-            timeOffset = serverUnixTime - deviceUnixTime; // サーバー時間とデバイス時間の差分
-        });
- 
+        setInterval(refreshUNIX, 10000);
+        refreshUNIX();
+
+
         const speed = 5;
-
         function rainbow() {
             const correctedUnixTime = Date.now() + timeOffset; // 補正されたunix time
             const time = correctedUnixTime * 0.001 * speed;
@@ -41,6 +45,7 @@
         }
 
         rainbow();
+
 
         const FullScreenBtn = document.documentElement;
         FullScreenBtn.addEventListener("click", () => {
