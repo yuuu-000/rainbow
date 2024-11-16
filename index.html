@@ -17,10 +17,21 @@
 </head>
 <body>
     <script>
+        let timeOffset = 0;
+        const deviceUnixTime = Date.now();
+
+        fetch("https://worldtimeapi.org/api/timezone/Etc/UTC")
+        .then(response => response.json())
+        .then(data => {
+            const serverUnixTime = new Date(data.utc_datetime).getTime();
+            timeOffset = serverUnixTime - deviceUnixTime; // サーバー時間とデバイス時間の差分
+        });
+ 
+        const correctedUnixTime = deviceUnixTime + timeOffset; // 補正されたunix time
         const speed = 5;
 
         function rainbow() {
-            const time = Date.now() * 0.001 * speed;
+            const time = correctedUnixTime * 0.001 * speed;
             const r = Math.round((Math.sin(time) + 1) * 127.5); // 0-255にスケーリング
             const g = Math.round((Math.sin(time + (2 * Math.PI) / 3) + 1) * 127.5); // 位相ずらし
             const b = Math.round((Math.sin(time + (4 * Math.PI) / 3) + 1) * 127.5); // 位相ずらし
