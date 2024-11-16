@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>rainbow</title>
+    <style>
+        body {
+            background-color: #fff;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        fetch("https://worldtimeapi.org/api/timezone/Etc/UTC", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            credentials: "omit"
+        })
+        .then(response => response.json())
+        .then(data => {
+            const utc = new Date(data.utc_datetime).getTime();
+            const speed = 5;
+
+            function rainbow() {
+                const time = (Date.now() - utc) * 0.001 * speed;
+                const r = Math.round((Math.sin(time) + 1) * 127.5); // 0-255にスケーリング
+                const g = Math.round((Math.sin(time + (2 * Math.PI) / 3) + 1) * 127.5); // 位相ずらし
+                const b = Math.round((Math.sin(time + (4 * Math.PI) / 3) + 1) * 127.5); // 位相ずらし
+
+                document.body.style.backgroundColor = `rgb(${r},${g},${b})`;
+                requestAnimationFrame(rainbow);
+            }
+
+            rainbow();
+        })
+
+        const FullScreenBtn = document.documentElement;
+        FullScreenBtn.addEventListener("click", () => {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else {
+                document.exitFullscreen();
+            }
+        });
+    </script>
+</body>
+</html>
