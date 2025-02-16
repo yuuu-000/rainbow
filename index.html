@@ -19,16 +19,16 @@
     <script>
         let timeOffset = 0;
         function refreshUNIX() {
-            fetch("https://worldtimeapi.org/api/timezone/Etc/UTC")
+            fetch("https://3fe5a5f690efc790d4764f1c528a4ebb89fa4168.nict.go.jp/cgi-bin/json")
             .then(response => response.json())
             .then(data => {
-                const serverUnixTime = new Date(data.utc_datetime).getTime();
+                const serverUnixTime = data.st * 1000;
                 const deviceUnixTime = Date.now();             
                 timeOffset = serverUnixTime - deviceUnixTime; // サーバー時間とデバイス時間の差分
             });
         }
 
-        setInterval(refreshUNIX, 7000);
+        setInterval(refreshUNIX, 5000);
         refreshUNIX();
 
 
